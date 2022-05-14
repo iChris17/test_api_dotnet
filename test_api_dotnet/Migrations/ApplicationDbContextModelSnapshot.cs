@@ -26,13 +26,20 @@ namespace test_api_dotnet.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Body")
-                        .HasColumnType("longtext");
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
-                    b.Property<DateTime>("NoteDate")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("NoteDate")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("NotesId");
 

@@ -70,5 +70,35 @@ namespace test_api_dotnet.Controllers
 
             return CreatedAtAction("GetNotes", new { id = notes.NotesId }, notes);
         }
+
+        [Route("edit")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateNotes(Notes notes)
+        {
+            _context.Entry(notes).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!NotesExists(notes.NotesId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(notes);
+        }
+
+        private bool NotesExists(int id)
+        {
+            return _context.Notes.Any(e => e.NotesId == id);
+        }
     }
 }

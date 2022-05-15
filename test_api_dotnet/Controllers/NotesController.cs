@@ -21,10 +21,17 @@ namespace test_api_dotnet.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Notes>>> GetNotes(string orderby)
+        public async Task<ActionResult<IEnumerable<Notes>>> GetNotes(string orderby, string search)
         {
             var notes = from s in _context.Notes
                            select s;
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                notes = notes.Where(s => s.Title.Contains(search)
+                                       || s.Body.Contains(search));
+            }
+
             switch (orderby)
             {
                 case "title_desc":

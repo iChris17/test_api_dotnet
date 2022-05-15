@@ -21,9 +21,45 @@ namespace test_api_dotnet.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Notes>>> GetNotes()
+        public async Task<ActionResult<IEnumerable<Notes>>> GetNotes(string orderby)
         {
-            return await _context.Notes.ToListAsync();
+            var notes = from s in _context.Notes
+                           select s;
+            switch (orderby)
+            {
+                case "title_desc":
+                    notes = notes.OrderByDescending(s => s.Title);
+                    break;
+                case "title":
+                    notes = notes.OrderBy(s => s.Title);
+                    break;
+                case "date_desc":
+                    notes = notes.OrderByDescending(s => s.NoteDate);
+                    break;
+                case "body_desc":
+                    notes = notes.OrderByDescending(s => s.Body);
+                    break;
+                case "body":
+                    notes = notes.OrderBy(s => s.Body);
+                    break;
+                default:
+                    notes = notes.OrderBy(s => s.NoteDate);
+                    break;
+            }
+            return await notes.AsNoTracking().ToListAsync();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Notes>> GetNotes(int id)
+        {
+            var notes = await _context.Notes.FindAsync(id);
+
+            if (notes == null)
+            {
+                return NotFound();
+            }
+
+            return notes;
         }
 
         [HttpPost]

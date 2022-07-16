@@ -42,6 +42,8 @@ namespace test_api_dotnet
                     .EnableDetailedErrors()
             );
 
+            services.AddCors();
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -75,6 +77,13 @@ namespace test_api_dotnet
             app.UseRouting();
 
             app.UseAuthorization();
+
+            var urlAceptadas = Configuration.GetSection("AllowedHosts").Value; ;
+
+            app.UseCors(builder => builder.WithOrigins(urlAceptadas)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            );
 
             app.UseEndpoints(endpoints =>
             {
